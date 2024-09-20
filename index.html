@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple CRUD Example</title>
+    <style>
+        table {
+            width: 50%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>CRUD Example</h1>
+
+    <!-- Input Form -->
+    <form id="crudForm">
+        <input type="hidden" id="index" value="-1">
+        <label>Name: <input type="text" id="name" required></label><br>
+        <label>Age: <input type="number" id="age" required></label><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <!-- Table to Display Data -->
+    <table id="crudTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Initialize an empty array for storing data
+        let data = [];
+
+        // Add event listener to the form
+        document.getElementById('crudForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let name = document.getElementById('name').value;
+            let age = document.getElementById('age').value;
+            let index = document.getElementById('index').value;
+
+            if (index == -1) {
+                // Create: Add new data
+                data.push({ name, age });
+            } else {
+                // Update: Modify existing data
+                data[index] = { name, age };
+                document.getElementById('index').value = -1;
+            }
+
+            document.getElementById('crudForm').reset();
+            renderTable();
+        });
+
+        // Function to render the data table
+        function renderTable() {
+            const tableBody = document.querySelector('#crudTable tbody');
+            tableBody.innerHTML = ''; // Clear previous rows
+            data.forEach((item, index) => {
+                let row = document.createElement('tr');
+
+                // Create table cells
+                let nameCell = document.createElement('td');
+                nameCell.textContent = item.name;
+
+                let ageCell = document.createElement('td');
+                ageCell.textContent = item.age;
+
+                let actionCell = document.createElement('td');
+
+                // Create Edit Button
+                let editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.onclick = () => editData(index);
+
+                // Create Delete Button
+                let deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => deleteData(index);
+
+                actionCell.appendChild(editButton);
+                actionCell.appendChild(deleteButton);
+
+                // Append cells to row
+                row.appendChild(nameCell);
+                row.appendChild(ageCell);
+                row.appendChild(actionCell);
+
+                // Append row to the table body
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to edit data
+        function editData(index) {
+            document.getElementById('name').value = data[index].name;
+            document.getElementById('age').value = data[index].age;
+            document.getElementById('index').value = index;
+        }
+
+        // Function to delete data
+        function deleteData(index) {
+            data.splice(index, 1); // Remove item from array
+            renderTable();
+        }
+    </script>
+
+</body>
+</html>
